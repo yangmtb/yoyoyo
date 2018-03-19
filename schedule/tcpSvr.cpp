@@ -47,6 +47,7 @@ int TcpServer::epollLoop(int max, int timeout)
   int nfds = 0, fd = 0, bufLen = 0;
   struct epoll_event evts[max];
   Node *no = nullptr;
+  auto it = gNodeMap.end();
   while (true) {
     nfds = epoll_wait(mEpollFd, evts, max, timeout);
     for (int i = 0; i < nfds; ++i) {
@@ -59,7 +60,16 @@ int TcpServer::epollLoop(int max, int timeout)
         printf("clt addr:%s port:%d\n", inet_ntoa(clt.sin_addr), ntohs(clt.sin_port));
         no = nullptr;
         if (nullptr != mRegister && (no = mRegister(fd)) != nullptr) {
-          ctlEvent(fd, true);
+          no->ip = inet_ntoa(clt.sin_addr);
+          no->port = ntohs(clt.sin_port);
+          it = gNodeMap.find(fd);
+          if (it == gNodeMap.end()) {
+            gNodeMap[fd] = no;
+            //printf("join:%d\n", fd);
+            ctlEvent(fd, true);
+          } else {
+            printf("exist:%d\n", fd);
+          }
         } else {
           printf("no register\n");
           close(fd);
@@ -68,6 +78,7 @@ int TcpServer::epollLoop(int max, int timeout)
         if ((fd = evts[i].data.fd) < 0) {
           continue;
         } else if (nullptr == mDeal || 0 != mDeal(fd)) {
+          gNodeMap.erase(fd);
           ctlEvent(fd, false);
           continue;
         }

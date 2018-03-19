@@ -1,11 +1,14 @@
 #include <iostream>
 #include <thread>
 #include <cstring>
+#include <unistd.h>
 #include "tcpSvr.hpp"
 
 using std::cout;
 using std::endl;
 using std::thread;
+
+intNodeMap gNodeMap;
 
 Node * registerNode(int fd);
 int dealBuffer(int fd);
@@ -20,11 +23,20 @@ void recvFunc()
 void selectFunc()
 {
   // select node status
+  int i = 0;
+  while (true) {
+    cout << "------------------" << i << endl;
+    for (auto &x: gNodeMap) {
+      cout << x.first << " :" << x.second->uuid << " " << x.second->ip << " " << x.second->port << endl;
+    }
+    sleep(2);
+    ++i;
+  }
 }
 
 int main(int argc, const char *argv[])
 {
-  cout << "uuid:" << genUuid() << endl;
+  //cout << "uuid:" << genUuid() << endl;
   thread recvTh (recvFunc);
   thread selectTh (selectFunc);
 

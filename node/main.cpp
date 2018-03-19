@@ -15,6 +15,7 @@ using std::endl;
 using std::string;
 
 Node * handshark(int fd);
+int sendNodeInfo(int fd)
 
 int main(int argc, const char *argv[])
 {
@@ -45,7 +46,13 @@ Node * handshark(int fd)
   // recv uuid
   cnt = recv(fd, buf, sizeof(buf), MSG_NOSIGNAL);
   string t(buf);
-  cout << "buf:" << buf << " cnt:" << cnt << endl;
+  //cout << "buf:" << buf << " cnt:" << cnt << endl;
   cout << "buf:" << t << endl;
+  sleep(4);
   return no;
+}
+
+int sendNodeInfo(int fd)
+{
+  return 0;
 }

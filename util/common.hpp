@@ -9,9 +9,18 @@
 using std::string;
 
 typedef struct NodeStruct Node;
+typedef struct TaskStruct Task;
+
 struct NodeStruct {
   int fd;
   string uuid;
+  string name;
+  int status;
+  string ip;
+  int port;
+};
+
+struct TaskStruct {
   string name;
 };
 

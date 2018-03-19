@@ -2,10 +2,16 @@
 #define __TCPSVR_HPP__
 
 #include <sys/socket.h>
+#include <map>
 #include "util/common.hpp"
+
+using std::map;
 
 typedef Node * (*registerFunc)(int fd);
 typedef int (*dealFunc)(int fd);
+typedef map<int, Node *> intNodeMap;
+
+extern intNodeMap gNodeMap;
 
 class TcpServer {
 public:
