@@ -3,11 +3,12 @@
 
 #include "util/common.hpp"
 
-typedef Node * (*handFunc)(int fd);
+typedef int (*handFunc)(int fd);
+typedef int (*sendFunc)(int fd);
 
 class TcpClient {
 public:
-  TcpClient(string addr, int port, handFunc hand = nullptr);
+  TcpClient(string addr, int port, handFunc hand = nullptr, sendFunc sed = nullptr);
   ~TcpClient();
 
   void run();
@@ -15,6 +16,7 @@ public:
 private:
   int mFd;
   handFunc mHand; // handshark
+  sendFunc mSend; // sendnodeinfo
 };
 
 #endif // __TCPCLT_HPP__

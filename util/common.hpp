@@ -18,10 +18,13 @@ struct NodeStruct {
   int status;
   string ip;
   int port;
+  Task tasks[10];
 };
 
 struct TaskStruct {
   string name;
+  uint64_t capacity;
+  uint64_t usable;
 };
 
 inline int setNoblock(int fd)

@@ -9,8 +9,8 @@
 #include "util/err.hpp"
 #include "tcpClt.hpp"
 
-TcpClient::TcpClient(string addr, int port, handFunc hand):
-  mFd(0), mHand(hand)
+TcpClient::TcpClient(string addr, int port, handFunc hand, sendFunc sed):
+  mFd(0), mHand(hand), mSend(sed)
 {
   mFd = socket(AF_INET, SOCK_STREAM, 0);
   if (-1 == mFd) {
@@ -30,6 +30,7 @@ TcpClient::TcpClient(string addr, int port, handFunc hand):
   svr.sin_addr.s_addr = inet_addr(addr.c_str());
   svr.sin_port = htons(port);
   if (-1 == connect(mFd, (struct sockaddr *)&svr, sizeof(svr))) {
+    printf("err:%s\n", strerror(errno));
     errExit("connect()", -1);
   }
 }
@@ -41,9 +42,14 @@ TcpClient::~TcpClient()
 
 void TcpClient::run()
 {
-  if (nullptr == mHand(mFd)) {
+  if (-1 == mHand(mFd)) {
     printf("handshark err\n");
     return;
   }
   printf("handshark ok\n");
+  if (-1 == mSend(mFd)) {
+    printf("sendnodeinfo err\n");
+    return;
+  }
+  printf("sendnodeinfo ok\n");
 }
